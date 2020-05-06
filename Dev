@@ -1,0 +1,12 @@
+How to installing Groups Development and System Tools on CentOS 8
+
+
+Step 01 . Install specific Group Package System:
+
+# dnf groupinstall 'System Tools'
+# dnf grouplist
+
+Step 02. Install specific Group Package Development: 
+
+# dnf -y groupinstall "Development Tools"
+# dnf grouplist
