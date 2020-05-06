@@ -1,0 +1,64 @@
+How to configuring Repositories for CentOS / RHEL 7
+
+Top 5 yum and dnf Repositories for RHEL/CentOS
+
+- RPMFusion
+- EPEL
+- REMI
+- ELRepo
+- Webtatic
+
+Step 1. Adding RPMFusion Repositories
+
+### For CentOS/RHEL 8 ###
+sudo dnf localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm
+sudo dnf localinstall --nogpgcheck https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-8.noarch.rpm
+
+### For CentOS/RHEL 7 ###
+sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm 
+sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
+
+Step 2. Adding EPEL Repositories
+
+### For CentOS/RHEL 8 ###
+sudo dnf localinstall --nogpgcheck https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/e/epel-rpm-macros-8-8.noarch.rpm
+
+### For CentOS/RHEL 7 ###
+sudo yum localinstall --nogpgcheck https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-rpm-macros-7-23.noarch.rpm
+
+Step 3. Adding REMI Repositories
+
+### For CentOS/RHEL 8 ###
+sudo dnf localinstall --nogpgcheck http://rpms.remirepo.net/enterprise/remi-release-8.rpm
+rpm -ql remi-release 
+
+### For CentOS/RHEL 7 ###
+sudo yum localinstall --nogpgcheck http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+rpm -ql remi-release 
+
+Step 4. Adding ELRepo Repositories
+
+### For CentOS/RHEL 8 ###
+sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+sudo rpm -Uvh https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
+
+### For CentOS/RHEL 7 ###
+sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+sudo rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+
+Step 5. Adding Webtatic Repositories
+
+### For CentOS/RHEL 7 ###
+sudo yum localinstall --nogpgcheck http://repo.webtatic.com/yum/el7/webtatic-release.rpm
+
+Step 6. Update for system packages
+
+### For CentOS/RHEL 6/7
+sudo yum clean all
+sudo yum install yum-utils
+sudo yum update -y
+
+### For CentOS/RHEL 8
+sudo dnf makecache
+sudo dnf install dnf-utils
+sudo dnf update -y
