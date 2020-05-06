@@ -1,0 +1,165 @@
+How to install and configuration BIND on CentOS / RHEL 7/8
+
+Step 01. Install BIND:
+
+# dnf -y install bind bind-utils
+
+Step 02. Copie diretory change:
+
+# cp -p /etc/named.conf /etc/named.conf.orig
+# rpm -qi bind
+# rpm -ql bind
+
+Step 03. Configure edit for named.conf:
+
+# nano /etc/named.conf
+
+//listen-on port 53 { 127.0.0.1; };
+//listen-on-v6 port 53 { ::1; };
+
+listen-on port 53 { 127.0.0.1; 192.168.2.110; };
+
+allow-query     { localhost; 192.168.2.0/24; };
+
+
+
+zone "example.local" IN {
+           
+           type master;
+
+           file "/var/named/example.local";
+
+           allow-update { none; };
+
+};
+
+
+zone "2.168.192.in-addr.arpa" IN {
+             
+             type master;
+             
+             file "/var/named/192.168.2.db";
+             
+             allow-update { none; };
+ 
+};
+
+
+#
+
+Step 04. Configure edit and created for named/example.local:
+
+# nano /var/named/example.local
+
+
+$TTL 86400
+@   IN  SOA     example.local root.example.local. (
+                                              3           ;Serial
+                                              3600        ;Refresh
+                                              1800        ;Retry
+                                              604800      ;Expire
+                                              86400       ;Minimum TTL
+)
+
+;Name Server Information
+@       IN  NS      example
+
+;IP address of Name Server
+example       IN  A       192.168.2.110
+
+
+#;Mail exchanger
+#example.local. IN  MX 109   elk.example.local.
+
+;A - Record HostName To Ip Address
+example  IN  A     192.168.2.110
+elk        IN  A     192.168.2.109
+
+;CNAME record
+
+Step 05. Configure edite and created for named/192.168.2.db is rev:
+
+# nano /var/named/192.168.2.db
+
+$TTL 86400
+@   IN  SOA    2.168.192.in-addr.arpa  root.example.local. (
+                                       3           ;Serial
+                                       3600        ;Refresh
+                                       1800        ;Retry
+                                       604800      ;Expire
+                                       86400       ;Minimum TTL
+)
+
+;Name Server Information
+@         IN      NS         example
+@         IN      NS         elk
+
+;Reverse lookup for Name Server
+110        IN  PTR     example
+
+;PTR Record IP address to HostName
+110      IN  PTR     example
+109      IN  PTR     elk
+
+Step 06. Checks the syntax:
+
+# named-checkconf /etc/named.conf
+# named-checkzone example.local /var/named/example.local.db
+or 
+# chgrp named /var/named/example.local 
+
+# named-checkzone 2.168.192.in-addr.arpa /var/named/192.168.2.db
+or
+# chgrp named /var/named/var/named/192.168.2.db
+
+
+Step 07. Running restart and enabled named:
+
+# systemctl restart named
+# systemctl enable named
+
+Step 08. Configure /etc/resolv.conf:
+
+# nano /etc/resolv.conf
+
+search example.local
+nameserver 192.168.2.110
+nameserver 192.168.2.109
+
+Step 09. Configure interface ethernet is DNS:
+
+# cd /etc/sysconfig/network-scripts/
+# nano ifcfg-eXX
+
+DNS1=192.168.2.110
+
+Step 10. Running restart network:
+
+# systemctl restart NetworkManager
+
+Step 11. DNS Record Update
+
+### Forward Zone ###
+
+# rndc reload example.local
+
+### Reverse Zone ###
+
+# rndc reload 2.168.192.in-addr.arpa
+
+
+Step 12. Configure Firewalld:
+
+# firewall-cmd --permanent --add-port=53/tcp
+# firewall-cmd --permanent --add-port=53/udp
+# firewall-cmd --reload
+# firewall-cmd --list-ports
+# systemctl restart NetworkManager
+# netstat -ltnp | grep named
+
+Step 13. Verify the forward lookup and nmap port 53
+
+# dig elk.example.local
+# dig -x 192.168.2.109
+# nmap -p 53 192.168.2.110
+# nmap -p 53 192.168.2.109
