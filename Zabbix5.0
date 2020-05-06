@@ -1,0 +1,57 @@
+How to install zabbix 5.0 on CentOS 8
+
+Step 1. Install Zabbix Repository
+
+# rpm -Uvh https://repo.zabbix.com/zabbix/4.5/rhel/8/x86_64/zabbix-release-4.5-2.el8.noarch.rpm
+# dnf clean all 
+
+Step 2. Install Zabbix Server, Frontend and Agent
+
+# dnf install zabbix-server-mysql zabbix-web-mysql zabbix-apache-conf zabbix-agent 
+
+Step 3. Create inital Database
+
+# mysql -uroot -p
+password
+mysql> create database zabbix character set utf8 collate utf8_bin;
+mysql> grant all privileges on zabbix.* to zabbix@localhost identified by 'root';
+mysql> quit; 
+
+# zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix 
+
+Step 4. Configure the Database for Zabbix Server
+
+# nano /etc/zabbix/zabbix_server.conf 
+
+DBHost=localhost
+DBPassword=root
+
+Step 5. Configure PHP for Zabbix Frontend
+
+# nano /etc/php-fpm.d/zabbix.conf 
+
+; php_value[date.timezone] = Americaa/Sao Paulo 
+
+Step 6. Service start e Enable Zabbix Server e Agent
+
+# systemctl restart zabbix-server zabbix-agent httpd php-fpm
+# systemctl enable zabbix-server zabbix-agent httpd php-fpm 
+
+
+Step 7. Configure edit the zabbix-agent
+
+#  nano /etc/zabbix/zabbix_agentd.conf
+
+Server=192.xxx.xxx.xxx
+ServerActive=192.xxx.xxx.xxx
+
+# systemctl restart zabbix-agent
+
+
+Step 8 - Configure Firewalld
+
+# firewall-cmd --add-service={http,https} --permanent
+# firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
+
+# firewall-cmd --reload
+# firewall-cmd --list-all
