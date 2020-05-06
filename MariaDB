@@ -1,0 +1,31 @@
+How to install 10.3 on centos 8
+
+Step 01. Install MariaDB Database the AppStream repository:
+
+# dnf module list mariadb 
+# dnf module install mariadb
+
+Step 02. More details on installed package:
+
+# rpm -qi mariadb-server
+
+Step 03. Activate the mariadb service:
+
+# systemctl enable mariadb
+# systemctl start mariadb
+
+Step 04. Harden MariaDB database server security:
+
+# mysql_secure_installation
+
+Step 05. Package repository cache should be updated 
+
+# dnf clean all
+# dnf update -y
+
+Step 06. Open MariaDB firewall ports for incoming traffic:
+
+# firewall-cmd --permanent --add-port=3306/tcp
+# firewall-cmd --permanent --add-port=3306/udp
+# firewall-cmd --reload
+# firewall-cmd --list-ports
