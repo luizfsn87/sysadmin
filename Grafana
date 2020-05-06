@@ -1,0 +1,80 @@
+how to install grafana on CentOS and RHEL 7/8
+
+Step 1. Create a repo file
+
+# sudo nano /etc/yum.repos.d/grafana.repo
+
+add:
+
+[grafana]
+name=grafana
+baseurl=https://packages.grafana.com/enterprise/rpm
+repo_gpgcheck=1
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.grafana.com/gpg.key
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+
+Step 2. Install grafana
+
+# sudo yum install initscripts urw-fonts
+# wget https://dl.grafana.com/enterprise/release/grafana-enterprise-6.7.2-1.x86_64.rpm
+# sudo yum install grafana-enterprise-6.7.2-1.x86_64.rpm
+
+Step 3. Install Tar.gz
+
+# sudo yum install tar
+# sudo tar -xvzf <package>.tar.gz
+# sudo yum clean all
+# sudo update -y
+
+
+Step 4. Service service with systemd
+
+# sudo systemctl daemon-reload
+# sudo systemctl start grafana-server
+# sudo systemctl status grafana-server
+# sudo systemctl enable --now grafana-server.service
+
+Step 5. Configure Firewall
+
+# sudo firewall-cmd --add-port=3000/tcp --permanent
+# sudo firewall-cmd --reload
+# firewall-cmd --list-all | grep 3000
+
+Step 6. Access Grafana Dashoard
+
+http://ip_or_hostname:3000
+Username: admin
+Password: admin
+
+Step 7. Grafana Package details:
+
+- Installs binary to "/usr/sbin/grafana-server"
+- Installs Init.d script to "/etc/init.d/grafana-server"
+- Creates a default file (environment vars) to "/etc/sysconfig/grafana-server"
+- Installs configuration file to "/etc/grafana/grafana.ini"
+- Installs systemd service (if systemd is available) name "grafana-server.service"
+- The default configuration sets the log file at "/var/log/grafana/grafana.log"
+- The default configuration specifies a sqlite3 db at "/var/lib/grafana/grafana.db"
+- Installs HTML/JS/CSS and other Grafana files at "/usr/share/grafana"
+
+Step 8. Adding Data Sources to Grafana Supported
+
+- Graphite
+- Elasticsearch
+- CloudWatch
+- InfluxDB
+- OpenTSDB
+- Prometheus
+- MySQL
+- Postgres
+- Microsoft SQL Server (MSSQL)
+
+Step 9. Install Plugins
+
+
+# cd /var/lib/grafana/plugins
+# grafana-cli plugins install alexanderzobnin-zabbix-app
+# systemctl restart grafana-server
