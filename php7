@@ -1,0 +1,47 @@
+How to install PHP 7.4 on CentOS 8 / RHEL 8
+
+Step 1. Available PHP versions
+
+# dnf module list php 
+
+Step 2. Enable latest PHP Module Stream remi-7.4
+
+# dnf module enable php:remi-7.4
+
+Step 3. Install and Verify PHP 
+
+# dnf install php php-cli php-common
+# php -v 
+
+Step 4. Enable FPM service
+
+# systemctl start php-fpm
+# systemctl enable php-fpm
+
+Step 5. Updating PHP Parameters
+
+# nano /etc/php.ini 
+
+…………
+upload_max_filesize = 32M 
+post_max_size = 48M 
+memory_limit = 256M 
+max_execution_time = 600 
+max_input_vars = 3000 
+max_input_time = 1000
+………
+
+Step 6. Configure Firewall
+
+# firewall-cmd --permanent --zone=public --add-service=http
+# firewall-cmd --permanent --zone=public --add-service=https
+# firewall-cmd --reload
+
+
+Step 7. Restart service httpd  or ngnix
+
+# systemctl restart httpd 
+
+or 
+
+# systemctl restart ngnix
