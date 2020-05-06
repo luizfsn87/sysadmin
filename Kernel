@@ -1,0 +1,32 @@
+How To Install Linux Kernel 5.x on CentOS 7
+
+Step 1. Setting Old Kernel
+
+# sudo uname -msr
+# sudo rpm -q kernel
+# sudo yum remove <package-kernel-version>
+# sudo yum clean all
+# sudo package-cleanup --oldkernels --count=2
+
+
+Step 2. Add elrepo-kernel
+
+# sudo yum list available --disablerepo='*' --enablerepo=elrepo-kernel
+# sudo yum --enablerepo=elrepo-kernel install kernel-ml
+# sudo yum --enablerepo=elrepo-kernel install kernel-lt
+# sudo reboot
+
+Step 3. Booted Kernel command
+
+# sudo uname -msr
+# sudo uname -r 
+
+Step 4. Setting Kernel 5.x
+
+# sudo nano /etc/default/grub
+
+set GRUB_DEFAULT=0
+
+# sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+# sudo reboot
+# sudo yum update -y
